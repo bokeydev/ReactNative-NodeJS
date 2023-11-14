@@ -26,6 +26,7 @@ const postSchema = mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      unique: true,
     },
     thumbnail: {
       type: Object,
