@@ -1,4 +1,9 @@
-const { createPost } = require("../controllers/post");
+const {
+  createPost,
+  deletePost,
+  updatePost,
+  getPost,
+} = require("../controllers/post");
 const multer = require("../middleware/multer");
 const { postValidator, validate } = require("../middleware/postValidator");
 const { parseData } = require("../middleware");
@@ -13,4 +18,15 @@ router.post(
   createPost
 );
 
+router.put(
+  "/:postId",
+  multer.single("thumbnail"),
+  parseData,
+  postValidator,
+  validate,
+  updatePost
+);
+
+router.delete("/:postId", deletePost);
+router.get("/single/:postId", getPost);
 module.exports = router;
