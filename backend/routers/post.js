@@ -3,6 +3,11 @@ const {
   deletePost,
   updatePost,
   getPost,
+  getFeaturedPosts,
+  getPosts,
+  searchPost,
+  getRelatedPosts,
+  uploadImage,
 } = require("../controllers/post");
 const multer = require("../middleware/multer");
 const { postValidator, validate } = require("../middleware/postValidator");
@@ -17,6 +22,7 @@ router.post(
   validate,
   createPost
 );
+router.post("/upload-image", multer.single("image"), uploadImage);
 
 router.put(
   "/:postId",
@@ -28,5 +34,10 @@ router.put(
 );
 
 router.delete("/:postId", deletePost);
-router.get("/single/:postId", getPost);
+router.get("/single/:slug", getPost);
+router.get("/featured-posts", getFeaturedPosts);
+router.get("/posts", getPosts);
+router.get("/related-posts/:postId", getRelatedPosts);
+router.get("/search", searchPost);
+
 module.exports = router;
