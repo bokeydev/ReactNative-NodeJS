@@ -38,7 +38,10 @@ const width = Dimensions.get('window').width - 20;
 export default function App() {
   const [dataToRender, setDataToRender] = useState([]);
   const [visibleSlideIndex, setVisibleSlideIndex] = useState(0);
-
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
+  console.log('duz' + dataToRender.length);
+  console.log('active' + activeSlideIndex);
+  console.log('visible' + visibleSlideIndex);
   const onViewableItemsChanged = useRef(({viewableItems}) => {
     setVisibleSlideIndex(viewableItems[0]?.index || 0);
   });
@@ -58,7 +61,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    const newData = [[...data].pop(), ...data, [...data].shift()];
+    const newData = [...data.slice(-1), ...data, ...data.slice(0, 1)];
     setDataToRender([...newData]);
   }, [data.length]);
 
@@ -71,10 +74,46 @@ export default function App() {
     if (visibleSlideIndex === 0 && dataToRender.length) {
       handleScrollTo(dataToRender.length - 2);
     }
+    const lastSlide = visibleSlideIndex === dataToRender.length - 1;
+    const firstSlide = visibleSlideIndex === 0;
+
+    if (lastSlide && dataToRender.length) setActiveSlideIndex(0);
+    else if (firstSlide && dataToRender.length)
+      setActiveSlideIndex(dataToRender.length - 3);
+    else setActiveSlideIndex(visibleSlideIndex - 1);
   }, [visibleSlideIndex]);
 
   return (
     <View style={styles.container}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingVertical: 5,
+        }}>
+        <Text style={{fontWeight: '700', color: 'gray', fontSize: 22}}>
+          Featured posts
+        </Text>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          {data.map((item, index) => {
+            return (
+              <View
+                key={item.id}
+                style={{
+                  width: 12,
+                  height: 12,
+                  borderRadius: 6,
+                  borderWidth: 2,
+                  marginLeft: 5,
+                  backgroundColor:
+                    activeSlideIndex === index ? 'black' : 'transparent',
+                }}
+              />
+            );
+          })}
+        </View>
+      </View>
       <FlatList
         ref={flatList}
         data={dataToRender}
