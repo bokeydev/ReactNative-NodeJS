@@ -53,6 +53,10 @@ export default function App() {
     flatList.current.scrollToIndex({animated: false, index: index});
   };
 
+  const handleFlatListLayout = () => {
+    handleScrollTo(1); // Set the initial visible index to the second item
+  };
+
   useEffect(() => {
     const newData = [[...data].pop(), ...data, [...data].shift()];
     setDataToRender([...newData]);
@@ -78,12 +82,12 @@ export default function App() {
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
-        initialScrollIndex={1}
         getItemLayout={(_, index) => ({
           length: width,
           offset: width * index,
           index,
         })}
+        onLayout={handleFlatListLayout}
         onViewableItemsChanged={onViewableItemsChanged.current}
         viewabilityConfig={viewabilityConfig.current}
         renderItem={({item}) => {
