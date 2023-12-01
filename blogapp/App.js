@@ -1,13 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {
-  Dimensions,
-  FlatList,
-  Image,
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import Slider from './app/components/Slider';
 
 const data = [
   {
@@ -31,123 +22,15 @@ const data = [
     title: 'novi tile',
     author: 'admin',
   },
+  {
+    id: '123456',
+    thumbnail:
+      'https://images.unsplash.com/photo-1699614614470-97206a4e6c62?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    title: 'novi tile',
+    author: 'admin',
+  },
 ];
 
-const width = Dimensions.get('window').width - 20;
-
 export default function App() {
-  const [dataToRender, setDataToRender] = useState([]);
-  const [visibleSlideIndex, setVisibleSlideIndex] = useState(0);
-  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
-  console.log('duz' + dataToRender.length);
-  console.log('active' + activeSlideIndex);
-  console.log('visible' + visibleSlideIndex);
-  const onViewableItemsChanged = useRef(({viewableItems}) => {
-    setVisibleSlideIndex(viewableItems[0]?.index || 0);
-  });
-
-  const flatList = useRef();
-
-  const viewabilityConfig = useRef({
-    viewAreaCoveragePercentThreshold: 50,
-  });
-
-  const handleScrollTo = index => {
-    flatList.current.scrollToIndex({animated: false, index: index});
-  };
-
-  const handleFlatListLayout = () => {
-    handleScrollTo(1); // Set the initial visible index to the second item
-  };
-
-  useEffect(() => {
-    const newData = [...data.slice(-1), ...data, ...data.slice(0, 1)];
-    setDataToRender([...newData]);
-  }, [data.length]);
-
-  useEffect(() => {
-    // reset slide to first
-    if (visibleSlideIndex === dataToRender.length - 1 && dataToRender.length) {
-      handleScrollTo(1);
-    }
-    //reset slide to last
-    if (visibleSlideIndex === 0 && dataToRender.length) {
-      handleScrollTo(dataToRender.length - 2);
-    }
-    const lastSlide = visibleSlideIndex === dataToRender.length - 1;
-    const firstSlide = visibleSlideIndex === 0;
-
-    if (lastSlide && dataToRender.length) setActiveSlideIndex(0);
-    else if (firstSlide && dataToRender.length)
-      setActiveSlideIndex(dataToRender.length - 3);
-    else setActiveSlideIndex(visibleSlideIndex - 1);
-  }, [visibleSlideIndex]);
-
-  return (
-    <View style={styles.container}>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          paddingVertical: 5,
-        }}>
-        <Text style={{fontWeight: '700', color: 'gray', fontSize: 22}}>
-          Featured posts
-        </Text>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          {data.map((item, index) => {
-            return (
-              <View
-                key={item.id}
-                style={{
-                  width: 12,
-                  height: 12,
-                  borderRadius: 6,
-                  borderWidth: 2,
-                  marginLeft: 5,
-                  backgroundColor:
-                    activeSlideIndex === index ? 'black' : 'transparent',
-                }}
-              />
-            );
-          })}
-        </View>
-      </View>
-      <FlatList
-        ref={flatList}
-        data={dataToRender}
-        keyExtractor={(item, index) => item.id + index}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        getItemLayout={(_, index) => ({
-          length: width,
-          offset: width * index,
-          index,
-        })}
-        onLayout={handleFlatListLayout}
-        onViewableItemsChanged={onViewableItemsChanged.current}
-        viewabilityConfig={viewabilityConfig.current}
-        renderItem={({item}) => {
-          return (
-            <View>
-              <Image
-                source={{uri: item.thumbnail}}
-                style={{width, height: width / 1.7, borderRadius: 7}}
-              />
-            </View>
-          );
-        }}
-      />
-    </View>
-  );
+  return <Slider data={data} title={'Featured posts'} />;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    alignSelf: 'center',
-    width,
-    paddingTop: 50,
-  },
-});
